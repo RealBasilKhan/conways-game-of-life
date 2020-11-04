@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Basil Khan - CS375 - Conway's Game of Life</title>
+    <style>
+     
+     td {
+text-align: center;
+width: 15px;
+height: 15px ;
+border: 2px solid rgb(158, 158, 158);
+}
+
+table {
+  border-collapse: collapse;
+}
+
+.alive {
+  background: black;
+}
+
+.dead {
+  background: white;
+}
+
+#firstBtn {
+  margin-top: 15px;
+  width: 75px;
+}
+#secondBtn {
+  margin-left: 10px;
+  margin-top: 15px;
+  width: 75px;
+}
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript" src="conway.js"></script>
+    <script>
+/* Basil Khan - CS375 - Conway's Game of Life */
+
+var interval;
+var newTable;
+
+var truthTable = [
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true]
+]
+
+
+/* Prints Initial grid with cells */
+var myTable = document.createElement("table");
+function createGrid(){
+  for (var i = 0; i < 25; i++){
+    var tr = myTable.insertRow();
+    for (var j = 0 ; j < 25; j++){
+    var td = tr.insertCell();
+    let cellIndex = "" + i + ", " + j +""
+    td.setAttribute("id",cellIndex)
+    if (i%2 == j%2) {
+      td.className = "alive" ;
+        } 
+        else {
+            td.className = "dead" ;
+        }
+
+    }
+  }
+document.body.appendChild(myTable); 
+}
+createGrid()
+
+function resetTable(){
+   clearInterval(interval);
+  truthTable = [
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true], 
+[false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false], 
+[true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true]
+]
+  for (var i = 0; i < 25; i++){
+    var tr = myTable.rows[i]
+    for (var j = 0 ; j < 25; j++){
+      td = tr.cells[j]
+    if (i%2 == j%2) {
+      td.className = "alive" ;
+        } 
+        else {
+            td.className = "dead" ;
+        }
+
+    }
+  }
+}
+
+function updateGrid(){
+  for (var i = 0; i < 25; i++){
+    let tr = myTable.rows[i]
+    for (var j = 0 ; j < 25; j++){
+    let td = tr.cells[j]
+    if (truthTable[i][j] == true) {
+      td.className = "alive";
+        } 
+        else if (truthTable[i][j] == false) {
+            td.className = "dead";
+        }
+
+    }
+  }
+}
+
+
+var goButton = document.createElement("button")
+var pauseButton = document.createElement("button")
+var stepButton = document.createElement("button");
+var resetButton = document.createElement("button");
+document.body.appendChild(goButton); 
+document.body.appendChild(pauseButton); 
+document.body.appendChild(stepButton); 
+document.body.appendChild(resetButton); 
+  goButton.textContent = "Go";
+  pauseButton.textContent = "Pause";
+  stepButton.textContent = "Step";
+  resetButton.textContent = "Reset";
+  goButton.setAttribute("id","firstBtn");
+  pauseButton.setAttribute("id","secondBtn");
+  stepButton.setAttribute("id","secondBtn");
+  resetButton.setAttribute("id","secondBtn");
+  goButton.addEventListener("click",startTimer);
+  pauseButton.addEventListener("click",pauseTimer);
+  stepButton.addEventListener("click",nextStep);
+  resetButton.addEventListener("click",resetTable);
+
+function nextStep(){
+  truthTable = stepBoard(truthTable);
+  updateGrid();
+}
+
+function startTimer(){
+  clearInterval(interval);
+  interval = setInterval(nextStep,100);
+}
+
+
+function pauseTimer(){
+  clearInterval(interval);
+}
+
+    </script>
+  </body>
+</html>
